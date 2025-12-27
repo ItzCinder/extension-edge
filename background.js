@@ -2,11 +2,46 @@
 
 console.log("El cerebro (background.js) ha empezado a funcionar.");
 
+// Al iniciar, cargar datos guardados
+chrome.runtime.onStartup.addListener(async () => {
+    await loadHistoryFromStorage();
+});
+
+chrome.runtime.onInstalled.addListener(async () => {
+    await loadHistoryFromStorage();
+});
+
 let counterInterval = null;
 let elapsedTime = 0; 
 let currentDomain = '';
 let historyAll = [];
 let historyWeekly = [];
+
+// Cargar historial del almacenamiento
+async function loadHistoryFromStorage() {
+    // Accedemos a los datos desde el almacenamiento local
+    const result = await chrome.storage.local.get(['historyAll', 'historyWeekly']);
+
+    if (result.historyAll){
+        historyAll = result.historyAll;
+    }
+    if (result.historyWeekly){
+        historyWeekly = result.historyWeekly;
+    }
+
+    console.log("Historial cargado desde storage:", historyAll);
+}
+
+// Guardar historial en el almacenamiento
+async function saveHistoryToStorage() {
+    await chrome.storage.local.set({
+        historyAll: historyAll,
+        historyWeekly: historyWeekly
+
+    });
+    console.log("Historial guardado en storage");
+}
+
 
 
 // Funcion general para guardar el tiempo de navegacion en los historiales
@@ -29,6 +64,9 @@ function saveToHistory(domain, timeSpent) {
 
     // Guardar en historial semanal
     saveToWeeklyHistory(domain, timeSpent);
+
+    // Guardar en storage despues de actualizar
+    saveHistoryToStorage();
 }
 // Guardar el tiempo de navegacion en el historial semanal (HistoryWeekly)
 // TODO: En produccion esta funcionalidad estara oculta al usuario pero seguira registrando datos
