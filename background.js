@@ -148,8 +148,8 @@ function switchTab(){
 
     counterInterval = setInterval(() =>{
         elapsedTime++;
-        // console.log(`Tiempo en esta pestaña:", formatTime(elapsedTime)); // debug
-
+        // console.log(`Tiempo en esta pestaña: ${formatTime(elapsedTime)}`); // debug
+    
     }, 1000); // 1000 ms = 1 segundo
 }
 
@@ -214,5 +214,3 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) =>{
         }
     }
 });
-
-
