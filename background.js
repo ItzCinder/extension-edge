@@ -41,10 +41,12 @@ async function saveHistoryToStorage() {
     // console.log("Historial guardado en storage"); // debug
 }
 
-
-
 // Funcion general para guardar el tiempo de navegacion en los historiales
-function saveToHistory(domain, timeSpent) {
+async function saveToHistory(domain, timeSpent) {
+    // Siempre cargar el historial mas reciente antes de modificar
+    const result = await chrome.storage.local.get(['historyAll', 'historyWeekly']);
+    historyAll = result.historyAll || [];
+    historyWeekly = result.historyWeekly || [];
     // Buscar si ya existe el dominio en el historyAll
     const existingEntry = historyAll.find(
         entry => entry.web === domain
@@ -62,16 +64,20 @@ function saveToHistory(domain, timeSpent) {
     }
 
     // Guardar en historial semanal
-    saveToWeeklyHistory(domain, timeSpent);
+    await saveToWeeklyHistory(domain, timeSpent);
 
     // Guardar en storage despues de actualizar
-    saveHistoryToStorage();
+    await saveHistoryToStorage();
 }
 // Guardar el tiempo de navegacion en el historial semanal (HistoryWeekly)
 // TODO: En produccion esta funcionalidad estara oculta al usuario pero seguira registrando datos
-function saveToWeeklyHistory(domain, timeSpent) {
+async function saveToWeeklyHistory(domain, timeSpent) {
     // El dia de hoy
     const today = new Date().toDateString();
+
+    // Siempre cargar el historial semanal mas reciente antes de modificar
+    const result = await chrome.storage.local.get(['historyWeekly']);
+    historyWeekly = result.historyWeekly || [];
 
     // Buscar si ya existe una entrada para este dominio y esta fecha
     const existingEntry = historyWeekly.find(
@@ -152,9 +158,6 @@ function switchTab(){
     
     }, 1000); // 1000 ms = 1 segundo
 }
-
-
-
 
 // Detecta cuando el usuario cambia a una pestaña diferente
 chrome.tabs.onActivated.addListener(activeInfo => {
