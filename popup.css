@@ -28,7 +28,7 @@ body {
 /* Header with gradient */
 .header{
   position: relative;
-  height: 12.8rem;
+  height: 10rem;
   background: linear-gradient(135deg, #3b82f6 0%, #a855f7 50%, #ec4899 100%);
   flex-shrink: 0;
   display: flex;
