@@ -55,6 +55,8 @@ async function saveToHistory(domain, timeSpent) {
     if (existingEntry) {
         // Si existe, sumar el tiempo
         existingEntry.time += timeSpent;
+        // Ordena el historial de mayor a menor
+        historyAll.sort((a, b) => b.time - a.time);
     } else {
         // Si no existe, crear nueva entrada
         historyAll.push({
@@ -87,6 +89,8 @@ async function saveToWeeklyHistory(domain, timeSpent) {
     if (existingEntry){
         // Si existe, sumar el tiempo
         existingEntry.time += timeSpent;
+        // Ordena el historial semanal de mayor a menor
+        historyWeekly.sort((a, b) => b.time - a.time);
     } else {
         historyWeekly.push({
             web: domain,
